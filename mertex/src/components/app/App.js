@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react';
 import './App.scss';
-import Ethernet from '../ethernet/ethernet'
+import Ethernet from '../ethernet/ethernet';
+import Wireless from '../wireless/wireless';
 
 export default class App extends PureComponent{
 

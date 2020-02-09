@@ -1,6 +1,7 @@
 import React, {PureComponent} from "react";
 import './ethernet.scss';
 import IpAddress from '../ip-address/ip-address';
+import Dns from '../dns/dns';
 
 export default class Ethernet extends PureComponent{
 
@@ -18,13 +19,12 @@ export default class Ethernet extends PureComponent{
     }
 
     returnState() {
-        console.log(this.state);
         const {cbChangeState} = this.props;
         cbChangeState('ethernet', {...this.state});
     }
 
     render() {
-        const {ip} = this.state;
+        const {ip, dns} = this.state;
         return (
                <div  className={`ethernet`}>
                    <h3>Ethernet settings</h3>
@@ -32,6 +32,10 @@ export default class Ethernet extends PureComponent{
                        cbChangeState={this.changeState}
                        data={ip}>
                    </IpAddress>
+                   <Dns
+                       cbChangeState={this.changeState}
+                       data={dns}>
+                   ></Dns>
                </div>
         );
     }
