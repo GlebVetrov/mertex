@@ -2,6 +2,10 @@
   margin: 10px;
   border: 1px solid #5c6870;
 
+  &__ethernet-wireless {
+    display: flex;
+  }
+
   &__controls {
     border-top: 1px solid #5c6870;
     padding: 10px;

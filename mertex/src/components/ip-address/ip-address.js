@@ -16,7 +16,6 @@ export default class IpAddress extends PureComponent{
         this.handleRadioGroup = this.handleRadioGroup.bind(this);
         this.isValid = this.isValid.bind(this);
         this.setError = this.setError.bind(this);
-        this.clearError = this.clearError.bind(this);
         this.returnState = this.returnState.bind(this);
         this.clearFields = this.clearFields.bind(this);
     }
@@ -36,11 +35,18 @@ export default class IpAddress extends PureComponent{
     };
 
     handleChange(name, event) {
-        const {data} = this.state;
+        const {data, errors} = this.state;
         if (name in data.manual) {
             const {value} = event.target;
             data.manual[name] = value;
             this.setState({data: {...data}}, this.returnState);
+        }
+        if (name in errors) {
+            if (errors[name].empty === true || errors[name].valid === true) {
+                errors[name].empty = false;
+                errors[name].valid = false;
+                this.setState({errors: {...errors}}, this.returnState);
+            }
         }
     }
 
@@ -49,14 +55,10 @@ export default class IpAddress extends PureComponent{
         return validRegExp.test(value.trim());
     }
 
-    clearError(name, errors) {
-        errors[name].empty = false;
-        errors[name].valid = false;
-    }
-
     setError(name, value) {
         const errors = {...this.state.errors};
-        this.clearError(name, errors);
+        errors[name].empty = false;
+        errors[name].valid = false;
         if (value === '') {
             errors[name].empty = true;
         }
@@ -114,36 +116,38 @@ export default class IpAddress extends PureComponent{
     }
 
     render() {
+        const {data, errors} = this.state;
+        const {disabled} = this.props;
         return (
             <div className={`ip-address`}>
-                <RadioGroup onChange={this.handleRadioGroup} defaultValue="automatically" aria-label="ip" name="ip-radios">
-                    <FormControlLabel value="automatically" control={<StyledRadio />} label="Obtain in IP address automatically (DHCP/BootP)" />
-                    <FormControlLabel value="manual" control={<StyledRadio />} label="Use the following IP address" />
+                <RadioGroup onChange={this.handleRadioGroup} value={data.automatically === true ? 'automatically' : 'manual'} aria-label="ip" name="ip-radios">
+                    <FormControlLabel value="automatically" control={<StyledRadio />} label="Obtain in IP address automatically (DHCP/BootP)"  disabled={disabled}/>
+                    <FormControlLabel value="manual" control={<StyledRadio />} label="Use the following IP address"  disabled={disabled}/>
                 </RadioGroup>
-                <div className={`ip-address__manual ${this.state.data.automatically === true && 'transparent'}`}>
+                <div className={`ip-address__manual ${data.automatically === true && 'transparent'}`}>
                     <label>
-                        { this.state.errors.ipAddress.empty && <span className={`error`}>Field is empty</span>}
-                        { this.state.errors.ipAddress.valid && <span className={`error`}>Wrong value</span>}
+                        { errors.ipAddress.empty && <span className={`error`}>Field is empty</span>}
+                        { errors.ipAddress.valid && <span className={`error`}>Wrong value</span>}
                         <span  className={`ip-address__manual-desc required`}>IP address: </span>
                         <Input
                             ref={this.ipRef}
                             onChange={this.handleChange.bind(this, 'ipAddress')}
                             onBlur={this.handleValidation.bind(this, 'ipAddress')}
-                            disabled={this.state.data.automatically}
-                            value={this.state.data.manual.ipAddress}>
+                            disabled={data.automatically}
+                            value={data.manual.ipAddress}>
                         </Input>
 
                     </label>
                     <label>
-                        { this.state.errors.mask.empty && <span className={`error`}>Field is empty</span>}
-                        { this.state.errors.mask.valid && <span className={`error`}>Wrong value</span>}
+                        { errors.mask.empty && <span className={`error`}>Field is empty</span>}
+                        { errors.mask.valid && <span className={`error`}>Wrong value</span>}
                         <span className={`ip-address__manual-desc required`}>Subnet Mask: </span>
                         <Input
                             ref={this.maskRef}
                             onChange={this.handleChange.bind(this, 'mask')}
                             onBlur={this.handleValidation.bind(this, 'mask')}
-                            disabled={this.state.data.automatically}
-                            value={this.state.data.manual.mask}>
+                            disabled={data.automatically}
+                            value={data.manual.mask}>
                         </Input>
                     </label>
                     <label>
@@ -151,8 +155,8 @@ export default class IpAddress extends PureComponent{
                         <Input
                             ref={this.gatewayRef}
                             onChange={this.handleChange.bind(this, 'gateway')}
-                            disabled={this.state.data.automatically}
-                            value={this.state.data.manual.gateway}>
+                            disabled={data.automatically}
+                            value={data.manual.gateway}>
                         </Input>
                     </label>
                 </div>

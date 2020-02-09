@@ -1,0 +1,36 @@
+{"ethernet":{
+  "ip":{
+    "automatically":true,
+    "manual":{
+      "is":false,
+      "ipAddress":"",
+      "mask":"",
+      "gateway":"",
+      "errors":false
+    }
+  },
+  "dns":{
+    "automatically":true,
+    "manual":{
+      "is":false,
+      "prefDns":"",
+      "alterDns":"",
+      "errors":false,
+      "gateway":"",
+      "mask":"",
+      "ipAddress":""
+    }
+  }
+},
+  "wireless":{
+    "wifi":{
+      "is":false,
+      "name":"",
+      "errors":false
+    },
+    "security":{
+      "is":false,
+      "key":"",
+      "errors":false
+    },
+    "ip":{"automatically":true,"manual":{"is":false,"ipAddress":"","mask":"","gateway":"","errors":false}},"dns":{"automatically":true,"manual":{"is":false,"prefDns":"","alterDns":"","errors":false}}}}

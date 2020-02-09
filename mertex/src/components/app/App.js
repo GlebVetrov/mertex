@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react';
 import './App.scss';
 import Ethernet from '../ethernet/ethernet';
 import Wireless from '../wireless/wireless';
+import data from './data';
 
 export default class App extends PureComponent{
 
@@ -12,60 +13,7 @@ export default class App extends PureComponent{
     this.saveData = this.saveData.bind(this);
   }
 
-  state = {
-    ethernet: {
-      ip: {
-        automatically: true,
-        manual: {
-          is: false,
-          ipAddress: '',
-          mask: '',
-          gateway: '',
-          errors: false
-        }
-      },
-      dns: {
-        automatically: true,
-        manual: {
-          is: false,
-          prefDns: '',
-          alterDns: '',
-          errors: false
-        }
-      }
-    },
-    wireless: {
-      wifi: {
-        is: false,
-        name: '',
-        errors: false
-      },
-      security: {
-        is: false,
-        key: '',
-        errors: false
-      },
-      ip: {
-        automatically: true,
-        manual: {
-          is: false,
-          ipAddress: '',
-          mask: '',
-          gateway: '',
-          errors: false
-        }
-      },
-      dns: {
-        automatically: true,
-        manual: {
-          is: false,
-          prefDns: '',
-          alterDns: '',
-          errors: false
-        }
-      }
-    }
-  };
+  state = {...data};
 
   changeState(name, data) {
     this.setState({[name]: {...data}});
@@ -81,6 +29,8 @@ export default class App extends PureComponent{
           <div className={`settings__ethernet-wireless`}>
             <Ethernet cbChangeState={this.changeState} data={this.state.ethernet}>
             </Ethernet>
+            <Wireless cbChangeState={this.changeState} data={this.state.wireless}>
+            </Wireless>
           </div>
           <div className={`settings__controls`}>
             <button onClick={this.saveData} className={`settings__controls-btn`}>Save</button>

@@ -13,7 +13,6 @@ export default class Dns extends PureComponent{
         this.handleRadioGroup = this.handleRadioGroup.bind(this);
         this.isValid = this.isValid.bind(this);
         this.setError = this.setError.bind(this);
-        this.clearError = this.clearError.bind(this);
         this.returnState = this.returnState.bind(this);
         this.clearFields = this.clearFields.bind(this);
     }
@@ -29,11 +28,18 @@ export default class Dns extends PureComponent{
     };
 
     handleChange(name, event) {
-        const {data} = this.state;
+        const {data, errors} = this.state;
         if (name in data.manual) {
             const {value} = event.target;
             data.manual[name] = value;
             this.setState({data: {...data}}, this.returnState);
+        }
+        if (name in errors) {
+            if (errors[name].empty === true || errors[name].valid === true) {
+                errors[name].empty = false;
+                errors[name].valid = false;
+                this.setState({errors: {...errors}}, this.returnState);
+            }
         }
     }
 
@@ -42,14 +48,10 @@ export default class Dns extends PureComponent{
         return validRegExp.test(value.trim());
     }
 
-    clearError(name, errors) {
-        errors[name].empty = false;
-        errors[name].valid = false;
-    }
-
     setError(name, value) {
         const errors = {...this.state.errors};
-        this.clearError(name, errors);
+        errors[name].empty = false;
+        errors[name].valid = false;
         if (value === '') {
             errors[name].empty = true;
         }
@@ -107,22 +109,24 @@ export default class Dns extends PureComponent{
     }
 
     render() {
+        const {data, errors} = this.state;
+        const {disabled} = this.props;
         return (
             <div className={`dns`}>
-                <RadioGroup onChange={this.handleRadioGroup} defaultValue="automatically" aria-label="dns" name="dns-radios">
-                    <FormControlLabel value="automatically" control={<StyledRadio />} label="Obtain DNS server address automatically" />
-                    <FormControlLabel value="manual" control={<StyledRadio />} label="Use the following DNS server address" />
+                <RadioGroup onChange={this.handleRadioGroup} value={data.automatically === true ? 'automatically' : 'manual'} aria-label="dns" name="dns-radios">
+                    <FormControlLabel value="automatically" control={<StyledRadio />} label="Obtain DNS server address automatically" disabled={disabled}/>
+                    <FormControlLabel value="manual" control={<StyledRadio />} label="Use the following DNS server address" disabled={disabled}/>
                 </RadioGroup>
-                <div className={`dns__manual ${this.state.data.automatically === true && 'transparent'}`}>
+                <div className={`dns__manual ${data.automatically === true && 'transparent'}`}>
                     <label>
-                        { this.state.errors.prefDns.empty && <span className={`error`}>Field is empty</span>}
-                        { this.state.errors.prefDns.valid && <span className={`error`}>Wrong value</span>}
+                        { errors.prefDns.empty && <span className={`error`}>Field is empty</span>}
+                        { errors.prefDns.valid && <span className={`error`}>Wrong value</span>}
                         <span  className={`dns__manual-desc required`}>Preferred DNS server: </span>
                         <Input
                             onChange={this.handleChange.bind(this, 'prefDns')}
                             onBlur={this.handleValidation.bind(this, 'prefDns')}
-                            disabled={this.state.data.automatically}
-                            value={this.state.data.manual.prefDns}>
+                            disabled={data.automatically}
+                            value={data.manual.prefDns}>
                         </Input>
 
                     </label>
@@ -130,8 +134,8 @@ export default class Dns extends PureComponent{
                         <span className={`dns__manual-desc`}>Alternative DNS server: </span>
                         <Input
                             onChange={this.handleChange.bind(this, 'alterDns')}
-                            disabled={this.state.data.automatically}
-                            value={this.state.data.manual.alterDns}>
+                            disabled={data.automatically}
+                            value={data.manual.alterDns}>
                         </Input>
                     </label>
                 </div>
