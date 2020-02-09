@@ -1,0 +1,13 @@
+.ip-address {
+  padding: 10px;
+
+  &__manual {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    &-desc {
+      padding: 20px;
+    }
+  }
+}
