@@ -1,6 +1,7 @@
 import React, {PureComponent} from "react";
 import  './wireless.scss';
-import {Checkbox, Input} from "@material-ui/core";
+import {Checkbox, Input, IconButton} from "@material-ui/core";
+import RefreshIcon from '@material-ui/icons/Refresh';
 import IpAddress from "../ip-address/ip-address";
 import Dns from "../dns/dns";
 
@@ -14,6 +15,7 @@ export default class Wireless  extends PureComponent{
         this.returnState = this.returnState.bind(this);
         this.handleValidation = this.handleValidation.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.networkName = this.networkName.bind(this);
     }
 
     state = {
@@ -39,11 +41,11 @@ export default class Wireless  extends PureComponent{
         const {value} = event.target;
         const {wifi, security, errors} = this.state;
         if (name === 'name') {
-            wifi.name = value;
+            wifi[name] = value;
             this.setState({wifi: {...wifi}}, this.returnState);
         }
         if (name === 'key') {
-            security.name = value;
+            security[name] = value;
             this.setState({security: {...security}}, this.returnState);
         }
 
@@ -77,6 +79,12 @@ export default class Wireless  extends PureComponent{
         cbChangeState('wireless', {...this.state});
     }
 
+    networkName() {
+        const {wifi} = this.state;
+        wifi.name = '';
+        this.setState({wifi: {...wifi}}, this.returnState);
+    }
+
     render() {
         const {wifi, security, ip, dns} = this.state;
         return (
@@ -94,7 +102,11 @@ export default class Wireless  extends PureComponent{
                             onChange={this.handleInputChange.bind(this, 'name')}
                             onBlur={this.handleValidation.bind(this, 'name')}
                             disabled={!wifi.is}
+                            value={wifi.name}
                         ></Input>
+                        <IconButton onClick={this.networkName} color="primary" component="span" disabled={!wifi.is}>
+                            <RefreshIcon />
+                        </IconButton>
                     </label>
                     <label>
                         <Checkbox onChange={this.handleCheckboxChange.bind(this, 'security')} color="primary" checked={security.is} disabled={!wifi.is}></Checkbox>
@@ -107,6 +119,7 @@ export default class Wireless  extends PureComponent{
                             onChange={this.handleInputChange.bind(this, 'key')}
                             onBlur={this.handleValidation.bind(this, 'key')}
                             disabled={!security.is}
+                            value={security.key}
                         ></Input>
                     </label>
                     <IpAddress
